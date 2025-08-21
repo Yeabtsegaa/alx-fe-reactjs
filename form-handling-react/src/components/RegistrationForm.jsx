@@ -17,7 +17,7 @@ const RegistrationForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    [if(!username , if(!email) , if(!password) , setError]
+    ["if(!username , "if(!email) , if(!password) , setError]
 
    
   
