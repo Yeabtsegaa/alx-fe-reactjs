@@ -29,7 +29,7 @@ const RegistrationForm = () => {
       newErrors.password = "Password is required";
     }
 
-    if (Object.keys(newErrors).length > 0) {
+    
       setErrors(newErrors);
       return;
     }
