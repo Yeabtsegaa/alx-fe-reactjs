@@ -17,17 +17,22 @@ const RegistrationForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!username) {
-      setError("field are required!");
-      return;
+     let newErrors = {};
+
+    if (!formData.username.trim()) {
+      newErrors.username = "Username is required";
     }
-    if(!email) {
-      setError("field required");
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
     }
-    if(!password) {
-      setError("field required");
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
     }
 
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
     setError("");
     console.log("Form submitted:", formData);
 
