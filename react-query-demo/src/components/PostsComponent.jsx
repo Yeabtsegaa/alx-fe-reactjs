@@ -1,46 +1,42 @@
 import { useQuery } from "@tanstack/react-query";
 
-const fetchPosts = async () => {
-  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-  if (!res.ok) {
-    throw new Error("Network response was not ok");
-  }
-  return res.json();
-};
+const POSTS_URL = "https://jsonplaceholder.typicode.com/posts";
 
-const PostsComponent = () => {
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    refetch,
-    isFetching,
-  } = useQuery({
+async function fetchPosts() {
+  const res = await fetch(POSTS_URL);
+  if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
+  return res.json();
+}
+
+export default function PostsComponent() {
+  const { data, isLoading, isError, error, isFetching, refetch } = useQuery({
     queryKey: ["posts"],
     queryFn: fetchPosts,
-    staleTime: 1000 * 60, // 1 min caching
-    cacheTime: 1000 * 300, // 5 min cache in memory
+    staleTime: 30 * 1000,
+    cacheTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    keepPreviousData: true, // ✅ preserves previous data during refetch
   });
 
-  if (isLoading) return <p>Loading posts...</p>;
-  if (isError) return <p>Error: {error.message}</p>;
+  if (isLoading) return <p>Loading posts…</p>;
+  if (isError) return <p style={{ color: "red" }}>{error.message}</p>;
 
   return (
     <div>
-      <h2>Posts</h2>
-      <button onClick={() => refetch()} disabled={isFetching}>
-        {isFetching ? "Refreshing..." : "Refetch Posts"}
-      </button>
+      <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+        <button onClick={() => refetch()}>
+          Refetch Posts {isFetching && "…"}
+        </button>
+      </div>
+
       <ul>
-        {data.slice(0, 10).map((post) => (
+        {data.slice(0, 20).map((post) => (
           <li key={post.id}>
-            <strong>{post.title}</strong>
+            <strong>#{post.id}</strong> {post.title}
           </li>
         ))}
       </ul>
+      <p style={{ opacity: 0.7 }}>Showing first 20 posts for brevity.</p>
     </div>
   );
-};
-
-export default PostsComponent;
+}
